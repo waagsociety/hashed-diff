@@ -7,10 +7,10 @@ The script uses the very fast xxhash to create temporary files with hashes for e
 Then it applies diff to these hashed files.
 Finally the script transforms the diff output to include the original lines.
 
-Dependencies:
+Install:
 
-gem install xxhash
+gem install hashed-diff
 
 Usage:
 
-./hashed_diff file1 file2
+hashed_diff file1 file2
