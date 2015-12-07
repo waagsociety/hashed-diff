@@ -4,15 +4,15 @@ require 'xxhash'
 # hashed_diff - Copyright Waag Society 2015 - 
 # Taco van Dijk & Lodewijk Loos
 #
-# memory efficient diff for very large files
+# reasonably fast, memory efficient diff for very large files
 #
 # uses the very fast xxhash to create temporary files with hashes for each individual line
 # applies diff to these hashed files
-# transforms the diff output to include the original lines instead of the hashes using sed
-#
+# transforms the diff output to include the original lines
+# 
 # Improvements: 
 # speed doesn't seem to improve using two threads, 
-# this because we're hitting io limits when hashing / sedding, which degrades performance
+# this because we're hitting io limits when hashing which degrades performance
 #
 exit(0) unless ARGV[0] && ARGV[1]
 
@@ -53,14 +53,19 @@ def output(line)
 	end	
 end
 
-#retrieve an array of lines from a file using sed
-def retrieve_lines(path, lns)
-	command = "sed -n"
-	lns.each do | ln |
-		command += " -e '#{ln}p'"
-	end
-	
-	`#{command} #{path}`.split("\n")
+#retrieve array of lines from a file by iterating
+def retrieve_lines(path,lns)
+	lines = []
+	count = 1
+	IO.foreach(path) { |line| 
+		if(lns.include? count)
+			lines << line
+			lns.shift
+		end
+		count += 1
+		break if (lns.count == 0)
+	}
+	return lines
 end
 
 #parse the line numbers to output 
@@ -104,7 +109,6 @@ diff.each_line do |line|
 	process line
 end
 
-# use sed to collect the lines in one go
 old_lines = retrieve_lines($old_file,$old_ln.flatten)
 new_lines = retrieve_lines($new_file,$new_ln.flatten)
 
