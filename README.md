@@ -13,4 +13,4 @@ gem install hashed-diff
 
 Usage:
 
-hashed_diff file1 file2
+hashed-diff file1 file2
