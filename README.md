@@ -10,3 +10,7 @@ Finally the script transforms the diff output to include the original lines.
 Dependencies:
 
 gem install xxhash
+
+Usage:
+
+./hashed_diff file1 file2
